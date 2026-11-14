@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+venv/
+
+# PyInstaller / Build
+build/
+dist/
+*.zip
+*.spec.bak
+
+# Edge Profile & Browser cache
+.edge_profile/
+.edge_profile_*/
+
+# Scraped Output & Temp Downloads
+downloads/
+output/
+BPM_Data/intern_config.json
+*.log
+debug_page.html
+

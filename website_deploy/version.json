@@ -1,0 +1,8 @@
+{
+  "service_online": true,
+  "latest_version": "2.1.2",
+  "min_supported_version": "2.1.2",
+  "release_url": "https://github.com/QWARDZ/BPM-Court-Scanner/releases/latest/download/BPM_Court_Scanner.exe",
+  "notice": "Version 2.1.2 released: Mandatory update enforcement with auto-exit on decline and clean dialog prompts.",
+  "system_message": "Service is currently undergoing scheduled maintenance. Please contact the administrator (John Edward Bearneza)."
+}

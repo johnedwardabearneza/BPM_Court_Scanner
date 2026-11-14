@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BPM Court Scanner | Legal Intelligence & Docket Automation</title>
+  <meta name="description" content="Automated court docket and brief scanning software for New York Appellate Division 2nd Dept (NYSCEF) and Kentucky C-Track courts.">
+  <link rel="icon" type="image/png" href="app_icon.png">
+  <link rel="shortcut icon" href="app_icon.ico">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfeff',
+              100: '#cffafe',
+              400: '#22d3ee',
+              500: '#06b6d4',
+              600: '#0891b2',
+              900: '#164e63',
+            },
+            surface: {
+              dark: '#080c14',
+              card: '#0f172a',
+              border: 'rgba(255, 255, 255, 0.08)',
+              hover: '#1e293b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      background-color: #070a11;
+      color: #f1f5f9;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gradient-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.05) 50%, transparent 80%);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Top Announcement / Status Bar -->
+  <header class="w-full border-b border-surface-border bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <i data-lucide="scale" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <span class="font-display font-bold text-lg text-white tracking-tight">BPM Court Scanner</span>
+          <span class="ml-2 px-2 py-0.5 text-[11px] font-mono font-medium rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/60">v2.1.2</span>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#jurisdictions" class="hover:text-white transition-colors">Jurisdictions</a>
+        <a href="#guide" class="hover:text-white transition-colors">User Guide</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Action Button -->
+      <div class="flex items-center gap-3">
+        <a href="BPM_Court_Scanner.exe" download="BPM_Court_Scanner.exe" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium text-sm shadow-md shadow-cyan-500/20 hover:from-cyan-400 hover:to-blue-500 transition-all hover:scale-[1.02] active:scale-[0.98]">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Download App (.exe)</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-grow">
+    <section class="relative pt-20 pb-24 overflow-hidden gradient-glow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+
+        <!-- Main Headline -->
+        <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight max-w-4xl mx-auto leading-[1.15] mb-6">
+          Automated Court Docket & Brief Scraping for <span class="gradient-text">Modern Legal Teams</span>
+        </h1>
+
+        <!-- Subheading -->
+        <p class="text-base sm:text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10 font-normal">
+          Designed specifically to parse New York Appellate Division 2nd Dept handdown calendars and Kentucky C-Track dockets with automated brief classification, captcha handoff, and Excel audit logs.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+          <a href="BPM_Court_Scanner.exe" download="BPM_Court_Scanner.exe" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-base shadow-xl shadow-cyan-500/25 hover:from-cyan-400 hover:to-blue-500 transition-all hover:scale-[1.02]">
+            <i data-lucide="download" class="w-5 h-5"></i>
+            <span>Download for Windows (.exe)</span>
+          </a>
+          <a href="#guide" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-medium text-base border border-slate-700/70 transition-all">
+            <i data-lucide="book-open" class="w-5 h-5 text-cyan-400"></i>
+            <span>Interactive User Guide</span>
+          </a>
+        </div>
+
+        <!-- Metric Badges -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6 border-t border-slate-800/80">
+          <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+            <div class="font-display font-bold text-2xl text-white">2 Courts</div>
+            <div class="text-xs text-slate-400 mt-1">NY AD2 & KY C-Track</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+            <div class="font-display font-bold text-2xl text-emerald-400">100% Local</div>
+            <div class="text-xs text-slate-400 mt-1">Zero Cloud Data Leaks</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+            <div class="font-display font-bold text-2xl text-cyan-400">Captcha-Safe</div>
+            <div class="text-xs text-slate-400 mt-1">Visual Human Handoff</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60">
+            <div class="font-display font-bold text-2xl text-purple-400">Auto-Excel</div>
+            <div class="text-xs text-slate-400 mt-1">Audit-Ready Reports</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- App Visual Simulation / Mockup -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 mb-24">
+      <div class="rounded-2xl p-2 bg-gradient-to-b from-slate-700/40 via-slate-800/20 to-transparent shadow-2xl">
+        <div class="rounded-xl overflow-hidden border border-surface-border bg-[#0b0f19] shadow-2xl">
+          <!-- Window Header Bar -->
+          <div class="h-10 bg-slate-900/90 border-b border-surface-border px-4 flex items-center justify-between select-none">
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+              <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+              <span class="ml-2 font-mono text-xs text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyan-400"></i>
+                BPM Court Scanner v2.1.2
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 text-[11px] font-mono rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">Ready</span>
+              <span class="px-2 py-0.5 text-[11px] font-sans rounded bg-slate-800 text-slate-300 border border-slate-700">ℹ About</span>
+            </div>
+          </div>
+
+          <!-- UI Interior Preview -->
+          <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Panel: Controls -->
+            <div class="lg:col-span-1 space-y-4">
+              <!-- Tab Pills -->
+              <div class="flex rounded-lg bg-slate-900 p-1 border border-slate-800 text-xs font-medium">
+                <div class="flex-1 py-1.5 px-3 rounded-md bg-emerald-600 text-white font-semibold text-center flex items-center justify-center gap-1.5 shadow">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  <span>New York (AD2)</span>
+                </div>
+                <div class="flex-1 py-1.5 px-3 rounded-md text-slate-400 text-center flex items-center justify-center gap-1.5 hover:text-slate-200">
+                  <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+                  <span>Kentucky (KY)</span>
+                </div>
+              </div>
+
+              <!-- Date Picker Card -->
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+                <label class="block text-xs font-semibold text-slate-300">Court Handdown Motion Date</label>
+                <div class="flex gap-2">
+                  <div class="flex-1 px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs font-mono text-slate-200">
+                    2026-11-10
+                  </div>
+                  <button class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300 hover:bg-slate-700">
+                    Today
+                  </button>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="space-y-2 pt-2">
+                <div class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30">
+                  <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                  <span>Start Scanning NY</span>
+                </div>
+                <div class="w-full py-2.5 px-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 font-medium text-xs flex items-center justify-center gap-2">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <span>🧹 Clear / Reset All</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Panel: Live Activity Terminal -->
+            <div class="lg:col-span-2 rounded-xl bg-[#050811] border border-slate-800 p-4 font-mono text-xs flex flex-col justify-between h-72">
+              <div class="space-y-1.5 text-slate-300 overflow-hidden">
+                <div class="text-slate-500 pb-1 border-b border-slate-800/80 flex justify-between">
+                  <span>TERMINAL LOG (Live Session)</span>
+                  <span class="text-emerald-400">● IDLE</span>
+                </div>
+                <div class="text-slate-400">[06:40:12] Application initialized. Version 2.1.2.</div>
+                <div class="text-cyan-400">[06:40:15] Checking remote telemetry... Service Status: Online.</div>
+                <div class="text-slate-400">[06:40:19] Ready. Handdown calendar detected for target jurisdiction.</div>
+                <div class="text-emerald-400">[06:41:02] [NY AD2] Fetched 18 case numbers from motion calendar.</div>
+                <div class="text-slate-300">[06:41:06] [NY AD2] Querying NYSCEF Case #2024-08122...</div>
+                <div class="text-blue-400">[06:41:08] [HIT] Document 12: Brief for Appellant downloaded to /downloads.</div>
+                <div class="text-emerald-400 flex items-center gap-1.5 pt-2">
+                  <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Session ready for next action.</span>
+                </div>
+              </div>
+
+              <!-- Terminal Status Footer -->
+              <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Output Directory: /downloads & /output</span>
+                <span>Microsoft Edge Profile: Isolated</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section id="features" class="py-20 border-t border-slate-800/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 text-cyan-400 text-xs font-semibold mb-3 border border-cyan-800/40">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            <span>Core Capabilities</span>
+          </div>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight mb-4">
+            Engineered for Precision Legal Operations
+          </h2>
+          <p class="text-slate-400 text-base">
+            Every feature is purpose-built to accelerate docket parsing while eliminating manual document hunting and error-prone tracking.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Feature 1: Dual-Court Automation -->
+          <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-cyan-500/30 transition-all group">
+            <div class="w-10 h-10 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center mb-4 text-cyan-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="layers" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white mb-2">Dual-Court Architecture</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Unified interface supporting both New York Supreme Court Appellate Division (AD2) and Kentucky Court of Justice (C-Track) portals in a single client.
+            </p>
+          </div>
+
+          <!-- Feature 2: Smart Classifier -->
+          <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-emerald-500/30 transition-all group">
+            <div class="w-10 h-10 rounded-xl bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center mb-4 text-emerald-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="filter" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white mb-2">Targeted Brief Filter</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Identifies collectable briefs (Appellant, Respondent, Reply, Cross-Appeals) while automatically rejecting procedural notices, receipts, and fee confirmations.
+            </p>
+          </div>
+
+          <!-- Feature 3: Captcha-Safe Handoff -->
+          <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-cyan-500/30 transition-all group">
+            <div class="w-10 h-10 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center mb-4 text-cyan-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="shield-alert" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white mb-2">Visual Captcha Handoff</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              When court security triggers a challenge, the browser surfaces cleanly for instant human solving, then seamlessly resumes automated scanning with zero data loss.
+            </p>
+          </div>
+
+          <!-- Feature 4: 100% Local Execution -->
+          <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-purple-500/30 transition-all group">
+            <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-800/60 flex items-center justify-center mb-4 text-purple-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="lock" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white mb-2">Zero Cloud Leaks</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Runs strictly locally on Windows with an isolated Microsoft Edge profile. No third-party scraper servers or confidential case telemetry sent to external clouds.
+            </p>
+          </div>
+
+          <!-- Feature 5: Auto Excel Audit Logs -->
+          <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-emerald-500/30 transition-all group">
+            <div class="w-10 h-10 rounded-xl bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center mb-4 text-emerald-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white mb-2">Audit-Ready Excel Reports</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Compiles full monthly tracking spreadsheets (<code class="text-emerald-300">.xlsx</code>) with formula validations, standard SOP file naming, and verification audit trails.
+            </p>
+          </div>
+
+          <!-- Feature 6: Telemetry & Integrity Guard -->
+          <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-blue-500/30 transition-all group">
+            <div class="w-10 h-10 rounded-xl bg-blue-950/80 border border-blue-800/60 flex items-center justify-center mb-4 text-blue-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="radio" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white mb-2">Remote Service Guard</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Silent background heartbeat for non-disruptive update alerts, scheduled maintenance announcements, and system integrity safeguards.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Jurisdictions Section -->
+    <section id="jurisdictions" class="py-20 border-t border-slate-800/60 bg-slate-950/40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight mb-4">
+            Dual-Jurisdiction Architecture
+          </h2>
+          <p class="text-slate-400 text-base">
+            Engineered to handle the unique filing formats, docket conventions, and document classification requirements of both New York and Kentucky appellate court systems.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- Card 1: New York AD2 -->
+          <div class="glass-panel rounded-2xl p-8 relative overflow-hidden border border-slate-800 hover:border-cyan-500/40 transition-all group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
+            
+            <div class="w-12 h-12 rounded-xl bg-cyan-950/80 border border-cyan-800/60 flex items-center justify-center mb-6 text-cyan-400">
+              <i data-lucide="landmark" class="w-6 h-6"></i>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <h3 class="font-display font-bold text-2xl text-white">New York — AD2</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-cyan-950 text-cyan-400 border border-cyan-800">NYSCEF</span>
+            </div>
+
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              Automates the ingestion of weekly Handdown Motion Lists from the New York State Supreme Court Appellate Division, Second Department (AD2), followed by targeted document lookups in NYSCEF.
+            </p>
+
+            <ul class="space-y-3 text-xs text-slate-300 font-medium">
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0"></i>
+                <span>Direct calendar scraping from official AD2 Handdowns portal (<code class="text-cyan-300">ad2/handdowns.shtml</code>)</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0"></i>
+                <span>Appellate Division County Index resolution (<code class="text-cyan-300">County Code 96</code>)</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0"></i>
+                <span>Smart classifier: Captures Appellant, Respondent & Reply Briefs while ignoring procedural receipts</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0"></i>
+                <span>Real-time Captcha detection with visual browser handoff & auto-resume</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 2: Kentucky C-Track -->
+          <div class="glass-panel rounded-2xl p-8 relative overflow-hidden border border-slate-800 hover:border-emerald-500/40 transition-all group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+
+            <div class="w-12 h-12 rounded-xl bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center mb-6 text-emerald-400">
+              <i data-lucide="table" class="w-6 h-6"></i>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <h3 class="font-display font-bold text-2xl text-white">Kentucky — C-Track</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-emerald-950 text-emerald-400 border border-emerald-800">Audit Ready</span>
+            </div>
+
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              Navigates the Kentucky Court of Justice Appellate Public Portal (C-Track), querying monthly briefing schedules and downloading collectible briefs across the entire state docket.
+            </p>
+
+            <ul class="space-y-3 text-xs text-slate-300 font-medium">
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                <span>Automated monthly briefing searches with pagination and docket traversal</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                <span>Standard Operating Procedure (SOP) filename formatting: <code class="text-emerald-300">CaseNo_DocDescription.pdf</code></span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                <span>Generates complete Excel workbooks (<code class="text-emerald-300">.xlsx</code>) with formula totals & case count validation</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                <span>Multi-lot & document deduplication guard against duplicate records</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- User Guide Section (Interactive Walkthrough) -->
+    <section id="guide" class="py-24 border-t border-slate-800/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 text-cyan-400 text-xs font-semibold mb-3 border border-cyan-800/40">
+            <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+            <span>Step-by-Step Tutorial</span>
+          </div>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight mb-4">
+            How to Use BPM Court Scanner
+          </h2>
+          <p class="text-slate-400 text-base">
+            No technical background required. Follow this quick tutorial to start extracting briefs and generating reports in minutes.
+          </p>
+        </div>
+
+        <!-- Workflow Tabs -->
+        <div class="max-w-4xl mx-auto">
+          <!-- Tab Selector Buttons -->
+          <div class="flex border-b border-slate-800 mb-8" id="guideTabs">
+            <button onclick="switchGuide('ny')" id="btnTabNy" class="flex-1 pb-4 text-center font-display font-semibold text-sm border-b-2 border-cyan-400 text-white flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="file-text" class="w-4 h-4 text-cyan-400"></i>
+              <span>New York AD2 Workflow</span>
+            </button>
+            <button onclick="switchGuide('ky')" id="btnTabKy" class="flex-1 pb-4 text-center font-display font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>Kentucky C-Track Workflow</span>
+            </button>
+          </div>
+
+          <!-- Guide Content: New York AD2 -->
+          <div id="contentNy" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              
+              <!-- Step 1 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-cyan-950 text-cyan-400 text-xs font-bold items-center justify-center border border-cyan-800">1</span>
+                <h4 class="font-display font-bold text-base text-white">Select Date</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Open the app. By default, it selects today's date. Or click <strong>Today</strong> / pick any specific handdown calendar date from the calendar dropdown.
+                </p>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-cyan-950 text-cyan-400 text-xs font-bold items-center justify-center border border-cyan-800">2</span>
+                <h4 class="font-display font-bold text-base text-white">Start Scanning</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Click the green <strong>Start Scanning NY</strong> button. The app will launch an automated Microsoft Edge instance and parse the day's motion list.
+                </p>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-amber-950 text-amber-400 text-xs font-bold items-center justify-center border border-amber-800">3</span>
+                <h4 class="font-display font-bold text-base text-white">Captcha Handoff</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  If NYSCEF displays a Cloudflare check, Edge automatically pops up into view. Solve the checkmark in Edge, then click <strong>Done / Continue</strong> in the app.
+                </p>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-emerald-950 text-emerald-400 text-xs font-bold items-center justify-center border border-emerald-800">4</span>
+                <h4 class="font-display font-bold text-base text-white">Review Output</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  PDF briefs are automatically saved to your <code class="text-cyan-300">downloads/NY_YYYY-MM-DD/</code> folder with organized case folders and clean filenames.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Guide Content: Kentucky C-Track -->
+          <div id="contentKy" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              
+              <!-- Step 1 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-emerald-950 text-emerald-400 text-xs font-bold items-center justify-center border border-emerald-800">1</span>
+                <h4 class="font-display font-bold text-base text-white">Switch Tab</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Click the <strong>Kentucky (C-Track)</strong> button at the top of the window to switch into the Kentucky appellate workspace.
+                </p>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-emerald-950 text-emerald-400 text-xs font-bold items-center justify-center border border-emerald-800">2</span>
+                <h4 class="font-display font-bold text-base text-white">Choose Month</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Select the desired <strong>Month</strong> and <strong>Year</strong> from the selectors (e.g. November 2026) to query the official briefing schedule.
+                </p>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-emerald-950 text-emerald-400 text-xs font-bold items-center justify-center border border-emerald-800">3</span>
+                <h4 class="font-display font-bold text-base text-white">Run Full Scan</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  Click <strong>Start Full Scan</strong>. The background worker queries C-Track dockets, skips irrelevant court orders, and downloads collectible briefs.
+                </p>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 relative">
+                <span class="inline-flex w-7 h-7 rounded-full bg-emerald-950 text-emerald-400 text-xs font-bold items-center justify-center border border-emerald-800">4</span>
+                <h4 class="font-display font-bold text-base text-white">Open Excel</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                  A comprehensive Excel audit file (<code class="text-emerald-300">Kentucky_Briefs_Audit_YYYY-MM.xlsx</code>) is instantly created in the <code class="text-emerald-300">output/</code> directory.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 border-t border-slate-800/60 bg-slate-950/40">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p class="text-slate-400 text-sm">
+            Everything you need to know about installation, security, and usage.
+          </p>
+        </div>
+
+        <!-- Accordion Items -->
+        <div class="space-y-4">
+          
+          <div class="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+            <button onclick="toggleFaq(1)" class="w-full p-5 text-left font-display font-semibold text-sm text-white flex justify-between items-center">
+              <span>What do I do when a Cloudflare or Captcha verification appears?</span>
+              <i data-lucide="chevron-down" id="faqIcon1" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </button>
+            <div id="faqBody1" class="p-5 pt-0 text-xs text-slate-400 leading-relaxed hidden">
+              Do not worry! The app has a built-in Captcha Detection Guard. Whenever NYSCEF or Cloudflare presents a challenge, the Edge browser will immediately pop up into the foreground. Simply complete the checkbox or puzzle in Edge, then click <strong>Done / Continue</strong> in the BPM Court Scanner window. The scanner will automatically resume without restarting!
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+            <button onclick="toggleFaq(2)" class="w-full p-5 text-left font-display font-semibold text-sm text-white flex justify-between items-center">
+              <span>Where are my downloaded briefs and Excel reports stored?</span>
+              <i data-lucide="chevron-down" id="faqIcon2" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </button>
+            <div id="faqBody2" class="p-5 pt-0 text-xs text-slate-400 leading-relaxed hidden">
+              All files are saved directly in your application directory:
+              <ul class="list-disc list-inside mt-2 space-y-1 text-slate-300">
+                <li><code class="text-cyan-300">downloads/NY_YYYY-MM-DD/</code>: Contains PDF briefs for NY AD2 cases, organized by day and case number.</li>
+                <li><code class="text-emerald-300">downloads/KY_YYYY-MM/</code>: Contains Kentucky C-Track PDF briefs named to exact SOP standards.</li>
+                <li><code class="text-purple-300">output/</code>: Contains the complete Excel audit log (<code class="text-purple-200">.xlsx</code>) for audit reconciliation.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+            <button onclick="toggleFaq(3)" class="w-full p-5 text-left font-display font-semibold text-sm text-white flex justify-between items-center">
+              <span>Does this tool require Python or extra libraries installed?</span>
+              <i data-lucide="chevron-down" id="faqIcon3" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </button>
+            <div id="faqBody3" class="p-5 pt-0 text-xs text-slate-400 leading-relaxed hidden">
+              No! BPM Court Scanner is distributed as a completely self-contained Windows executable (<code class="text-cyan-300">.exe</code>). All dependencies, browser drivers, and parsers are bundled inside. You only need Windows 10/11 with standard Microsoft Edge (which is pre-installed on all modern Windows PCs).
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+            <button onclick="toggleFaq(4)" class="w-full p-5 text-left font-display font-semibold text-sm text-white flex justify-between items-center">
+              <span>Can I safely stop the scanner midway?</span>
+              <i data-lucide="chevron-down" id="faqIcon4" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </button>
+            <div id="faqBody4" class="p-5 pt-0 text-xs text-slate-400 leading-relaxed hidden">
+              Yes. Clicking the yellow <strong>⏹ Stop</strong> button triggers a graceful shutdown. The worker finishes downloading the current document to prevent corrupted files, saves all progress to the Excel file, and returns the application to the Ready state.
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+            <button onclick="toggleFaq(5)" class="w-full p-5 text-left font-display font-semibold text-sm text-white flex justify-between items-center">
+              <span>What is the "🧹 Clear / Reset All" button for?</span>
+              <i data-lucide="chevron-down" id="faqIcon5" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </button>
+            <div id="faqBody5" class="p-5 pt-0 text-xs text-slate-400 leading-relaxed hidden">
+              The Clear Manager wipes temporary browser session caches, purges orphaned scratch folders, resets the log console, and clears case queues without affecting your saved Excel spreadsheets. Use it whenever you want a completely fresh run!
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+            <button onclick="toggleFaq(6)" class="w-full p-5 text-left font-display font-semibold text-sm text-white flex justify-between items-center">
+              <span>Why does Windows say "Windows protected your PC" (SmartScreen) on first launch?</span>
+              <i data-lucide="chevron-down" id="faqIcon6" class="w-4 h-4 text-slate-400 transition-transform"></i>
+            </button>
+            <div id="faqBody6" class="p-5 pt-0 text-xs text-slate-400 leading-relaxed hidden">
+              This is standard Windows behavior. Microsoft Defender SmartScreen flags any newly compiled executable that does not have an expensive corporate EV Code-Signing certificate ($400+/year). It is completely safe. Simply click <strong><u>More info</u></strong> and select <strong>Run anyway</strong>. Windows will remember your choice and will not prompt you again!
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <!-- Left: Logo & Attribution -->
+      <div class="space-y-1 text-center md:text-left">
+        <div class="font-display font-bold text-sm text-slate-300">BPM Court Scanner</div>
+        <div>Architected &amp; Developed by <span class="text-slate-200 font-semibold">John Edward Bearneza</span></div>
+        <div>All rights reserved. © 2026.</div>
+      </div>
+
+      <!-- Right: Links -->
+      <div class="flex items-center gap-6">
+        <a href="#features" class="hover:text-slate-300 transition-colors">Features</a>
+        <a href="#guide" class="hover:text-slate-300 transition-colors">Guide</a>
+        <a href="#faq" class="hover:text-slate-300 transition-colors">FAQ</a>
+        <a href="#download" class="hover:text-cyan-400 transition-colors font-medium">Download v2.1.2</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Scripts for Interactive Tabs & FAQ Accordion -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Tab Switcher for User Guide
+    function switchGuide(type) {
+      const btnNy = document.getElementById('btnTabNy');
+      const btnKy = document.getElementById('btnTabKy');
+      const contentNy = document.getElementById('contentNy');
+      const contentKy = document.getElementById('contentKy');
+
+      if (type === 'ny') {
+        btnNy.className = "flex-1 pb-4 text-center font-display font-semibold text-sm border-b-2 border-cyan-400 text-white flex items-center justify-center gap-2 transition-all";
+        btnKy.className = "flex-1 pb-4 text-center font-display font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 transition-all";
+        contentNy.classList.remove('hidden');
+        contentKy.classList.add('hidden');
+      } else {
+        btnKy.className = "flex-1 pb-4 text-center font-display font-semibold text-sm border-b-2 border-emerald-400 text-white flex items-center justify-center gap-2 transition-all";
+        btnNy.className = "flex-1 pb-4 text-center font-display font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 transition-all";
+        contentKy.classList.remove('hidden');
+        contentNy.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    // FAQ Accordion Toggle
+    function toggleFaq(num) {
+      const body = document.getElementById('faqBody' + num);
+      const icon = document.getElementById('faqIcon' + num);
+
+      if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        body.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    }
+  </script>
+</body>
+</html>
+
